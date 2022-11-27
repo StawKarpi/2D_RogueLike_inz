@@ -56,7 +56,7 @@ public class Player : MovingObject
             vertical = 0;
 
         if (horizontal != 0 || vertical != 0)
-            AttemptMove<Wall>(horizontal, vertical);
+            AttemptMove<Enemy>(horizontal, vertical);
 
         if(horizontal < 0)
         {
@@ -102,12 +102,19 @@ public class Player : MovingObject
 
                 Debug.Log("Hit enemy " + hitEnemy.health);
             }
-            
+            else if (enemy.gameObject.tag == "Ball")
+            {
+                EnemyBall hitEnemyBall = enemy.gameObject.GetComponent<EnemyBall>();
+                hitEnemyBall.LoseHealth(damage);
+
+                Debug.Log("Hit enemy ball " + hitEnemyBall.health);
+            }
+
         }
 
         CheckIfGameOver();
 
-        GameManager.instance.playersTurn = false;
+        //GameManager.instance.playersTurn = false;
 
 
     }
@@ -122,7 +129,7 @@ public class Player : MovingObject
 
         CheckIfGameOver();
 
-        GameManager.instance.playersTurn = false;
+        //GameManager.instance.playersTurn = false;
     }
 
     private void OnTriggerEnter2D (Collider2D other)
@@ -142,13 +149,6 @@ public class Player : MovingObject
 
     protected override void OnCantMove <T> (T component)
     {
-        Enemy hitEnemy = component as Enemy;
-        
-        
-        hitEnemy.LoseHealth(damage);
-        animator.SetTrigger("playerChop");
-        Debug.Log("Hit enemy: " + hitEnemy.health);
-        
         
     }
 

@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     private GameObject retryButton;
     private int level = 1;
     private List<Enemy> enemies;
+    private List<EnemyBall> balls;
     private bool enemiesMoving;
     private bool doingSetup;
     private bool exitOpen = false;
@@ -35,6 +36,7 @@ public class GameManager : MonoBehaviour
         
         
         enemies = new List<Enemy>();
+        balls = new List<EnemyBall>();
         boardScript = GetComponent<BoardManager>();
         InitGame();
     }
@@ -71,6 +73,7 @@ public class GameManager : MonoBehaviour
     {
         doingSetup = true;
         enemies.Clear();
+        balls.Clear();
 
         levelImage = GameObject.Find("LevelImage");
         levelText = GameObject.Find("LevelText").GetComponent<Text>();
@@ -106,15 +109,19 @@ public class GameManager : MonoBehaviour
         StartCoroutine(MoveEnemies());
         if(enemies.Count <= 0 && !exitOpen)
         {
-            Instantiate(exit, new Vector3(Random.Range(1, 9), 9, 0F), Quaternion.identity);
+            Instantiate(exit, new Vector3(Random.Range(1, level+4), level+4, 0F), Quaternion.identity);
             exitOpen = true;
         }
-        Debug.Log(gameOver);
     }
 
     public void AddEnemyToList(Enemy script)
     {
         enemies.Add(script);
+    }
+
+    public void AddBallToList(EnemyBall script)
+    {
+        balls.Add(script);
     }
 
     IEnumerator MoveEnemies()
@@ -140,8 +147,22 @@ public class GameManager : MonoBehaviour
             }
             
         }
+        for (int i = 0; i < balls.Count; i++)
+        {
+            if (balls[i].health <= 0)
+            {
+                balls.RemoveAt(i);
+            }
+            else if (balls[i].health > 0)
+            {
 
-        playersTurn = true;
+                balls[i].MoveEnemyBall();
+                yield return new WaitForSeconds(balls[i].moveTime);
+            }
+
+        }
+
+        //playersTurn = true;
 
         enemiesMoving = false;
     }

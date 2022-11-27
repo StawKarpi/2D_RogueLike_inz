@@ -19,8 +19,8 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public int columns = 20;
-    public int rows = 20;
+    /*public int columns;
+    public int rows;*/
     public Count wallCount = new Count (5,9);
     public Count foodCount = new Count (1,5);
     public GameObject exit;
@@ -28,13 +28,14 @@ public class BoardManager : MonoBehaviour
     public GameObject[] floorTiles;
     public GameObject[] wallTiles;
     public GameObject[] foodTiles;
+    public GameObject[] ballTiles;
     public GameObject[] enemyTiles;
     public GameObject[] outerWallTiles;
 
     private Transform boardHolder;
     private List <Vector3> gridPositions = new List<Vector3>();
 
-    void InitialiseList()
+    void InitialiseList(int columns, int rows)
     {
         gridPositions.Clear();
 
@@ -48,7 +49,7 @@ public class BoardManager : MonoBehaviour
             
     }
 
-    void BoardSetup()
+    void BoardSetup(int columns, int rows)
     {
         boardHolder = new GameObject ("Board").transform;
 
@@ -91,8 +92,10 @@ public class BoardManager : MonoBehaviour
 
    public void SetupScene(int level)
    {
-    BoardSetup();
-    InitialiseList();
+        int columns = level + 5;
+        int rows = level + 5;
+    BoardSetup(columns, rows);
+    InitialiseList(columns, rows);
     LayoutObjectAtRandom(wallTiles, wallCount.minimum, wallCount.maximum);
     LayoutObjectAtRandom(foodTiles, foodCount.minimum, foodCount.maximum);
     if (level != 5)
@@ -103,6 +106,11 @@ public class BoardManager : MonoBehaviour
     if(level == 5)
         {
             Instantiate(boss, new Vector3(Random.Range(1, columns - 1), rows - 2, 0F), Quaternion.identity);
+        }
+    if (level > 1)
+        {
+            int ballCount = Random.Range(1, level - 4);
+            LayoutObjectAtRandom(ballTiles, ballCount, ballCount);
         }
     
     //Instantiate(exit, new Vector3(Random.Range(1,columns-1), rows - 1, 0F), Quaternion.identity);

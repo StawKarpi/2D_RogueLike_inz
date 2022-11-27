@@ -6,10 +6,13 @@ public class Enemy : MovingObject
 {
     public int playerDamage;
     public int health = 100;
+    public LayerMask objectsLayer;
 
     private Animator animator;
     private Transform target;
     private bool skipMove;
+    private int attackRange = 1;
+
     
 
     protected override void Start()
@@ -29,6 +32,7 @@ public class Enemy : MovingObject
         }
 
         base.AttemptMove<T>(xDir, yDir);
+        Attack();
 
         skipMove = true;
     }
@@ -43,7 +47,8 @@ public class Enemy : MovingObject
         else
             xDir = target.position.x > transform.position.x ? 1 : -1;
 
-        AttemptMove<Player>(xDir, yDir);
+        AttemptMove<Wall>(xDir, yDir);
+       
     }
 
     public void LoseHealth(int loss)
@@ -56,15 +61,53 @@ public class Enemy : MovingObject
         }
     }
 
+    void Attack()
+    {
+        Collider2D[] hitObjects = Physics2D.OverlapCircleAll(gameObject.transform.position, attackRange, objectsLayer);
+
+        foreach (Collider2D hitObject in hitObjects)
+        {
+            if (hitObject.gameObject.tag == "Player")
+            {
+                Player player = hitObject.gameObject.GetComponent<Player>();
+                if (GameManager.instance.gameOver == false)
+                {
+                    player.LoseHealth(playerDamage);
+                    animator.SetTrigger("enemyAttack");
+
+                }
+                
+            }
+            /*else if (hitObject.gameObject.tag == "Wall")
+            {
+                Debug.Log("Wall collision!");
+                Wall wall = hitObject.gameObject.GetComponent<Wall>();
+                animator.SetTrigger("enemyAttack");
+
+                wall.DamageWall(1);
+            }*/
+        }
+    }
+
     protected override void OnCantMove <T> (T component)
     {
-        Player hitPlayer = component as Player;
-        if(GameManager.instance.gameOver == false)
+        /*if (component.tag == "Player")
         {
+            Debug.Log("Player detected");
+            Player hitPlayer = component as Player;
+            if (GameManager.instance.gameOver == false)
+            {
+                animator.SetTrigger("enemyAttack");
+
+                hitPlayer.LoseHealth(playerDamage);
+            }
+        } */
+            Wall hitWall = component as Wall;
             animator.SetTrigger("enemyAttack");
 
-            hitPlayer.LoseHealth(playerDamage);
-        }
+            hitWall.DamageWall(1);
+
+        
         
     }
 }
