@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     private Text levelText;
     private GameObject levelImage;
     private GameObject retryButton;
-    private int level = 1;
+    public int level = 1;
     private List<Enemy> enemies;
     private List<EnemyBall> balls;
     private bool enemiesMoving;
@@ -109,7 +109,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(MoveEnemies());
         if(enemies.Count <= 0 && !exitOpen)
         {
-            Instantiate(exit, new Vector3(Random.Range(1, level+4), level+4, 0F), Quaternion.identity);
+            Instantiate(exit, new Vector3(Random.Range(1, level+4), boardScript.rows-1, 0F), Quaternion.identity);
             exitOpen = true;
         }
     }

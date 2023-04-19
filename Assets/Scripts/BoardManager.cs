@@ -25,12 +25,14 @@ public class BoardManager : MonoBehaviour
     public Count foodCount = new Count (1,5);
     public GameObject exit;
     public GameObject boss;
+    public GameObject pistol;
     public GameObject[] floorTiles;
     public GameObject[] wallTiles;
     public GameObject[] foodTiles;
     public GameObject[] ballTiles;
     public GameObject[] enemyTiles;
     public GameObject[] outerWallTiles;
+    public int columns, rows;
 
     private Transform boardHolder;
     private List <Vector3> gridPositions = new List<Vector3>();
@@ -92,27 +94,51 @@ public class BoardManager : MonoBehaviour
 
    public void SetupScene(int level)
    {
-        int columns = level + 5;
-        int rows = level + 5;
-    BoardSetup(columns, rows);
-    InitialiseList(columns, rows);
-    LayoutObjectAtRandom(wallTiles, wallCount.minimum, wallCount.maximum);
-    LayoutObjectAtRandom(foodTiles, foodCount.minimum, foodCount.maximum);
-    if (level != 5)
+        if (level < 3)
+        {
+            Debug.Log(level);
+            columns = Random.Range(level + 5, level + 7);
+            rows = Random.Range(level + 5, level + 7);
+            Debug.Log("c: " + columns + " r: " + rows);
+        }
+        else if (level > 3 && level != 5)
+        {
+            columns = Random.Range(level + 3, level + 5);
+            rows = Random.Range(level + 3, level + 5);
+        }
+        else if (level == 5)
+        {
+            columns = level + 1;
+            rows = level + 1;
+        }
+
+        BoardSetup(columns, rows);
+        InitialiseList(columns, rows);
+        LayoutObjectAtRandom(wallTiles, wallCount.minimum, wallCount.maximum);
+        LayoutObjectAtRandom(foodTiles, foodCount.minimum, foodCount.maximum);
+
+        if (level != 5 && level != 10)
         {
             int enemyCount = (int)Mathf.Log(level + 1, 2f);
             LayoutObjectAtRandom(enemyTiles, enemyCount, enemyCount);
         }
-    if(level == 5)
+        if (level == 3)
+        {
+            Instantiate(pistol, new Vector3(Random.Range(1, columns - 1), 1, 0F), Quaternion.identity);
+            //Debug.Log("pistol x: " + pistol.transform.position.x + "pistol y: " + pistol.transform.position.y);
+        }
+        if (level == 5)
         {
             Instantiate(boss, new Vector3(Random.Range(1, columns - 1), rows - 2, 0F), Quaternion.identity);
         }
-    if (level > 1)
+        if (level > 5)
         {
-            int ballCount = Random.Range(1, level - 4);
+            int ballCount = Random.Range(1, level);
             LayoutObjectAtRandom(ballTiles, ballCount, ballCount);
         }
-    
-    //Instantiate(exit, new Vector3(Random.Range(1,columns-1), rows - 1, 0F), Quaternion.identity);
-   }
+        if (level == 10)
+        {
+            Instantiate(boss, new Vector3(Random.Range(1, columns - 1), rows - 2, 0F), Quaternion.identity);
+        }
+    }
 }

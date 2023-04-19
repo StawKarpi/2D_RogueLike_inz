@@ -6,9 +6,16 @@ public class Weapon : MonoBehaviour
 {
     public Transform firePoint;
     public int damage = 20;
+    public GameObject hitImpact;
 
-    // Update is called once per frame
-    void Update()
+    private Animator animator;
+
+        void Start()
+    {
+        animator = GetComponent<Animator>();
+
+    }
+        void Update()
     {
         if (Input.GetButtonDown("Fire1"))
         {
@@ -18,6 +25,8 @@ public class Weapon : MonoBehaviour
 
     void Shoot()
     {
+        animator.SetTrigger("GunShoot");
+
         RaycastHit2D hitInfo = Physics2D.Raycast(firePoint.position, firePoint.right);
 
         if (hitInfo)
@@ -25,7 +34,9 @@ public class Weapon : MonoBehaviour
             if (hitInfo.transform.gameObject.tag == "Enemy")
             {
                 Enemy hitEnemy = hitInfo.transform.gameObject.GetComponent<Enemy>();
-                hitEnemy.LoseHealth(damage);
+                hitEnemy.GetShot(damage);
+
+                Instantiate(hitImpact, hitInfo.point, Quaternion.identity);
 
                 Debug.Log("Shot enemy " + hitEnemy.health);
             }

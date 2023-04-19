@@ -19,8 +19,6 @@ public class Player : MovingObject
     private Animator animator;
     private int health;
     
-
-    // Start is called before the first frame update
     protected override void Start()
     {
         animator = GetComponent<Animator>();
@@ -39,7 +37,6 @@ public class Player : MovingObject
         GameManager.instance.playerHealth = health;
     }
 
-    // Update is called once per frame
     void Update()
     {
 
